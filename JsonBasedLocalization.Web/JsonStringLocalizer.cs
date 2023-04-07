@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 
 namespace JsonBasedLocalization.Web
 {
@@ -11,6 +12,18 @@ namespace JsonBasedLocalization.Web
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             throw new NotImplementedException();
+        }
+
+        private String GetValueFromJson(String propertyName, String filePath) 
+        {
+            if (String.IsNullOrEmpty(propertyName) || String.IsNullOrEmpty(filePath)) 
+            {
+                return String.Empty;
+            }
+
+            using FileStream stream = new FileStream(filePath,FileMode.Open , FileAccess.Read , FileShare.Read);
+            StreamReader streamReader = new StreamReader(stream);
+            using JsonTextReader reader = new JsonTextReader(streamReader);
         }
     }
 }

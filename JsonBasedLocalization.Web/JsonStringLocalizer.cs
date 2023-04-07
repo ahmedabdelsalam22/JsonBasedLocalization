@@ -31,7 +31,22 @@ namespace JsonBasedLocalization.Web
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            throw new NotImplementedException();
+            var filePath = $"Resources/{Thread.CurrentThread.CurrentCulture.Name}.json";
+
+            using FileStream stream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using StreamReader streamReader = new(stream);
+            using JsonTextReader reader = new(streamReader);
+
+            while (reader.Read())
+            {
+                if (reader.TokenType != JsonToken.PropertyName)
+                    continue;
+
+                var key = reader.Value as string;
+                reader.Read();
+                var value = _serializer.Deserialize<string>(reader);
+                yield return new LocalizedString(key, value);
+            }
         }
 
         private string GetString(string key) 

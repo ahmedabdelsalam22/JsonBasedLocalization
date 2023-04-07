@@ -9,7 +9,14 @@ namespace JsonBasedLocalization.Web
         private readonly JsonSerializer _serializer = new JsonSerializer();
 
 
-        public LocalizedString this[string name] => throw new NotImplementedException();
+        public LocalizedString this[string name] 
+        {
+            get
+            {
+                var value = GetString(name);
+                return new LocalizedString(name, value);
+            }
+        }
 
         public LocalizedString this[string name, params object[] arguments] => throw new NotImplementedException();
 
@@ -18,6 +25,18 @@ namespace JsonBasedLocalization.Web
             throw new NotImplementedException();
         }
 
+        private string GetString(string key) 
+        {
+            var filePath = $"Resources/{Thread.CurrentThread.CurrentCulture.Name}.json";
+            var fullFilePath = Path.GetFullPath(filePath);
+
+            if (File.Exists(fullFilePath)) 
+            {
+                var result = GetValueFromJson(key, fullFilePath);
+                return result;
+            }
+            return string.Empty;
+        }
         private String GetValueFromJson(String propertyName, String filePath) 
         {
             if (String.IsNullOrEmpty(propertyName) || String.IsNullOrEmpty(filePath)) 

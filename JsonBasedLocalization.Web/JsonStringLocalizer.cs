@@ -18,7 +18,16 @@ namespace JsonBasedLocalization.Web
             }
         }
 
-        public LocalizedString this[string name, params object[] arguments] => throw new NotImplementedException();
+        public LocalizedString this[string name, params object[] arguments] 
+        {
+            get
+            {
+                var actualValue = this[name];
+                return !actualValue.ResourceNotFound
+                    ? new LocalizedString(name, string.Format(actualValue.Value, arguments))
+                    : actualValue;
+            }
+        }
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
